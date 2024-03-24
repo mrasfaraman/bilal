@@ -23,11 +23,7 @@ import {ThemeContext} from '../context/ThemeContext';
 import {useAuth} from '../context/AuthContext';
 import {getUSDamount, importSolToken} from '../utils/function';
 import MaroonSpinner from '../components/Loader/MaroonSpinner';
-import {useTranslation} from 'react-i18next';
-import i18n from './i18n';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
+import SubmitBtn from '../components/SubmitBtn';
 // let ethereum = [
 //                 {
 //                     coingekoId: "SHIBA INU",
@@ -101,20 +97,7 @@ const Swap = ({navigation}) => {
   const [loadingValue2, setLoadingValue2] = useState(false);
 
   const [ballance, setBalance] = useState(0);
-  const {t} = useTranslation();
-  useEffect(() => {
-    const loadSelectedLanguage = async () => {
-      try {
-        const selectedLanguage = await AsyncStorage.getItem('selectedLanguage');
-        if (selectedLanguage) {
-          i18n.changeLanguage(selectedLanguage); 
-        }
-      } catch (error) {
-        console.error('Error loading selected language:', error);
-      }
-    };
-    loadSelectedLanguage();
-  }, []);
+
   const selectTopToken = data => {
     setTopToken(data);
     setModalVisible(!modalVisible);
@@ -329,7 +312,7 @@ const Swap = ({navigation}) => {
               ]}>
               <View style={styles.amountImageLeftFlex}>
                 <Text style={[styles.amountSwapLable, {color: theme.text}]}>
-                {t('token_list')}
+                  Token List
                 </Text>
               </View>
               <TouchableOpacity
@@ -637,8 +620,7 @@ const Swap = ({navigation}) => {
               ]}>
               <View style={styles.amountImageLeftFlex}>
                 <Text style={[styles.amountSwapLable, {color: theme.text}]}>
-                {t('token_list')}
-
+                  Token List
                 </Text>
               </View>
               <TouchableOpacity
@@ -890,7 +872,7 @@ const Swap = ({navigation}) => {
                     backgroundColor: 'gray',
                     borderRadius: 5,
                   }}>
-                  <Text style={{color: theme.buttonText}}>{t('max')}</Text>
+                  <Text style={{color: theme.buttonText}}>MAX</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -903,7 +885,7 @@ const Swap = ({navigation}) => {
   return (
     <ScrollView
       style={[styles.mainWrapper, {backgroundColor: theme.screenBackgroud}]}>
-      <Header title={t('swap')} onBack={() => navigation.goBack()} />
+      <Header title={'Swap'} onBack={() => navigation.goBack()} />
       <View
         style={{
           justifyContent: 'center',
@@ -912,7 +894,7 @@ const Swap = ({navigation}) => {
           marginBottom: 20,
         }}>
         <Text style={{color: theme.text, fontSize: 30}}>
-          {activeNet?.type.toUpperCase()} {t('swap')}
+          {activeNet?.type.toUpperCase()} SWAP
         </Text>
       </View>
       {loading ? (
@@ -970,34 +952,30 @@ const Swap = ({navigation}) => {
           {/* <View style={ { marginTop: 20 }}>
             <ChooseChannel />
             </View> */}
-          {topValue > ballance ? (
-            <View style={[styles.tokenImportBtnWrapper]}>
-              <TouchableOpacity
-                style={[
-                  styles.tokenImportButton,
-                  {borderColor: 'gray', backgroundColor: 'gray'},
-                ]}>
-                <Text
-                  style={[styles.tokenImportButtonText, {color: theme.text}]}>
-                  {t('swap')}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={[styles.tokenImportBtnWrapper]}>
-              <TouchableOpacity
-                onPress={() => swap()}
-                style={[
-                  styles.tokenImportButton,
-                  {borderColor: theme.buttonBorder},
-                ]}>
-                <Text
-                  style={[styles.tokenImportButtonText, {color: theme.text}]}>
-                  {t('swap')}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
+
+          <View style={[styles.tokenImportBtnWrapper]}>
+            <SubmitBtn
+              title="Swap"
+              onPress={() => {
+                if (topValue > ballance) return;
+                swap();
+              }}
+              containerStyle={{marginHorizontal: 0}}
+            />
+            {/* <TouchableOpacity
+              onPress={() => {
+                if (topValue > ballance) return;
+                swap();
+              }}
+              style={[
+                styles.tokenImportButton,
+                {borderColor: theme.buttonBorder},
+              ]}>
+              <Text style={[styles.tokenImportButtonText, {color: theme.text}]}>
+                Swap
+              </Text>
+            </TouchableOpacity> */}
+          </View>
         </View>
       )}
     </ScrollView>

@@ -1,16 +1,13 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// const BASE_URI = 'https://wave-production-18b7.up.railway.app';
 const BASE_URI = 'https://wavebackendnew-production.up.railway.app';
-// const BASE_URI = 'https://be9c-111-88-229-24.ngrok-free.app';
 
 const KEY = '5416846351sd4sf51sd3f51sd8f4sd6f51sd35f16sd8f';
-import {useEffect, useState} from 'react';
-
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
-
 const CreateWallet = async () => {
   try {
     const responseData = await postData(BASE_URI + '/create-wallet');
@@ -269,49 +266,30 @@ const Solana_swap = async (inputMint, outputMint, amount, token) => {
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
-// const fetchCoins = async () => {
-//     try {
-//         const response = await axios.get(`https://api.coingecko.com/api/v3/coins/markets`, {
-//             params: {
-//                 vs_currency: 'usd',
-//                 order: 'market_cap_desc',
-//                 per_page: 10,
-//                 page: 1,
-//                 sparkline: true, // Set this to true to get the sparkline data
-//                 price_change_percentage: '24h',
-//             },
-//         });
-//         AsyncStorage.setItem('GekoTokens', JSON.stringify(response.data));
-//         return response.data;
-//     } catch (error) {
-//         const GekoTokens = await AsyncStorage.getItem('GekoTokens');
-//         console.log("Error fetching geko coins: ", error);
-//         return JSON.parse(GekoTokens);
-//         //   return []; // Return an empty array in case of an error
-//     }
-// };
-
-// async function fetchCoins() {
-//     try {
-//       const response = await axios.get(`https://api.coingecko.com/api/v3/coins/markets`, {
-//         params: {
-//           vs_currency: 'usd',
-//           order: 'market_cap_desc',
-//           per_page: 10,
-//           page: 1,
-//           sparkline: true, // Set this to true to get the sparkline data
-//           price_change_percentage: '24h',
-//         },
-//       });
-//       AsyncStorage.setItem('GekoTokens', JSON.stringify(response.data))
-//       return response.data;
-//     } catch (error) {
-//       const GekoTokens = await AsyncStorage.getItem('GekoTokens');
-//       console.log("Error fetching geko coins: ", error);
-//       return JSON.parse(GekoTokens);
-//     //   return []; // Return an empty array in case of an error
-//     }
-// };
+async function fetchCoins() {
+  try {
+    const response = await axios.get(
+      `https://api.coingecko.com/api/v3/coins/markets`,
+      {
+        params: {
+          vs_currency: 'usd',
+          order: 'market_cap_desc',
+          per_page: 10,
+          page: 1,
+          sparkline: true, // Set this to true to get the sparkline data
+          price_change_percentage: '24h',
+        },
+      },
+    );
+    AsyncStorage.setItem('GekoTokens', JSON.stringify(response.data));
+    return response.data;
+  } catch (error) {
+    const GekoTokens = await AsyncStorage.getItem('GekoTokens');
+    console.log('Error fetching geko coins: ', error);
+    return JSON.parse(GekoTokens);
+    //   return []; // Return an empty array in case of an error
+  }
+}
 
 async function getUSDamount(symbol) {
   if (typeof symbol !== 'string' || symbol.trim() === '') {
@@ -320,9 +298,6 @@ async function getUSDamount(symbol) {
   }
 
   try {
-    // Adding a 3-second delay
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
     const response = await axios.get(
       `https://api.coinbase.com/v2/prices/${symbol.toUpperCase()}-USD/spot`,
     );
@@ -353,10 +328,6 @@ async function getCoinGeckoIdForSymbol(symbol) {
     const coin = data.find(
       coin => coin.symbol.toLowerCase() === symbol.toLowerCase(),
     );
-
-    // Adding a 2-second delay
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
     return coin ? coin.id : null;
   } catch (error) {
     console.error('Error fetching CoinGecko coin list:', error);
@@ -371,9 +342,6 @@ async function fetchTokenPriceInUSD(symbol) {
       console.log(`Could not find CoinGecko ID for symbol: ${symbol}`);
       return;
     }
-
-    // Adding a 3-second delay
-    await new Promise(resolve => setTimeout(resolve, 3000));
 
     const priceResponse = await axios.get(
       `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`,
@@ -392,35 +360,23 @@ async function fetchTokenPriceInUSD(symbol) {
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 async function decrypt(token) {
-    try {
-      // Adding a 3-second delay
-      await new Promise(resolve => setTimeout(resolve, 3000));
-  
-      const decryptData = await postData(BASE_URI + '/decrypt', { token, KEY });
-      return decryptData;
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
-    }
+  try {
+    const decryptData = await postData(BASE_URI + '/decrypt', {token, KEY});
+    return decryptData;
+  } catch (error) {
+    console.error('Failed to fetch data:', error);
   }
-  
-  async function encrypt(token) {
-    try {
-      // Adding a 3-second delay
-      await new Promise(resolve => setTimeout(resolve, 3000));
-  
-      const encryptData = await postData(BASE_URI + '/encrypt', { token, KEY });
-      return encryptData;
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
-    }
+}
+async function encrypt(token) {
+  try {
+    const encryptData = await postData(BASE_URI + '/encrypt', {token, KEY});
+    return encryptData;
+  } catch (error) {
+    console.error('Failed to fetch data:', error);
   }
-  
-
+}
 async function postData(apiUrl, data) {
   try {
-    // Adding a 2-second delay
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -457,6 +413,7 @@ export {
   getsolTrx,
   sendSolToken,
   sendEvmToken,
+  fetchCoins,
   Evm_estimatedGas,
   Evm_estimatedGas_Evm,
   Sol_estimatedGas,

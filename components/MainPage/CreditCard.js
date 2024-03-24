@@ -25,10 +25,6 @@ import {ThemeContext} from '../../context/ThemeContext';
 import {DoodleContext} from '../../context/DoodleContext';
 import {getSolBalance, getEVMBalance} from '../../utils/function';
 import {useAuth} from '../../context/AuthContext';
-import {useTranslation} from 'react-i18next';
-import i18n from "../../pages/i18n";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 import {
   ALERT_TYPE,
@@ -36,6 +32,13 @@ import {
   AlertNotificationRoot,
   Toast,
 } from 'react-native-alert-notification';
+import {
+  accelerometer,
+  gyroscope,
+  setUpdateIntervalForType,
+  SensorTypes,
+} from 'react-native-sensors';
+setUpdateIntervalForType(SensorTypes.accelerometer, 50); // defaults to 100ms
 
 const CreditCard = ({
   getOpenCustomizer,
@@ -50,7 +53,7 @@ const CreditCard = ({
   const {selectedNetwork, Networks, selectedAccount} = useAuth();
   const [ballance, setBalance] = useState(0);
   const [activeNet, setActiveNet] = useState();
-
+  const [hideFullAddress, setHideFullAddress] = useState(true);
   const getNetworkactive = async () => {
     let data = await JSON.parse(selectedNetwork);
     setActiveNet(data);
@@ -81,20 +84,6 @@ const CreditCard = ({
       setBalance(data?.balance);
     }
   };
-  const {t} = useTranslation();
-  useEffect(() => {
-    const loadSelectedLanguage = async () => {
-      try {
-        const selectedLanguage = await AsyncStorage.getItem('selectedLanguage');
-        if (selectedLanguage) {
-          i18n.changeLanguage(selectedLanguage); 
-        }
-      } catch (error) {
-        console.error('Error loading selected language:', error);
-      }
-    };
-    loadSelectedLanguage();
-  }, []);
   useEffect(() => {
     getbls();
     const intervalId = setInterval(getbls, 10000);
@@ -105,6 +94,29 @@ const CreditCard = ({
     getbls();
   }, [selectedAccount]);
 
+  useEffect(() => {
+    // Subscribe to accelerometer data
+    const subscription = accelerometer.subscribe(({x, y, z}) => {
+      // Calculate the magnitude of acceleration
+      const acceleration = Math.sqrt(x * x + y * y + z * z);
+
+      // Threshold for detecting shake (adjust as needed)
+      const shakeThreshold = 25;
+
+      // Check if the magnitude of acceleration exceeds the threshold
+      if (acceleration > shakeThreshold) {
+        // Shake gesture detected, handle accordingly
+        console.log('Shake detected!', hideFullAddress);
+        setHideFullAddress(prev => !prev);
+      }
+    });
+
+    // Cleanup: unsubscribe from accelerometer data when component unmounts
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
   return (
     <ImageBackground
       source={doodle}
@@ -112,14 +124,18 @@ const CreditCard = ({
       style={[styles.cardWrapper, {backgroundColor: doodleBG}]}>
       <View style={styles.cardHeader}>
         <View>
-          <Text style={[styles.cardAmount, {color: theme.text}]}>
+          <Text style={[styles.cardAmount, {color: theme.cardtext}]}>
             {address?.length === 23 ? (
               'Account Not Available'
             ) : (
               <>
                 &nbsp;
                 {Number(ballance).toFixed(5)
-                  ? Number(ballance).toFixed(5)
+                  ? hideFullAddress
+                    ? Number(ballance)
+                        .toFixed(5)
+                        .replace(/[^\]](?![^\[]*\])/g, '*')
+                    : Number(ballance).toFixed(5)
                   : '0.00'}{' '}
                 {activeNet?.symbol}
               </>
@@ -144,15 +160,12 @@ const CreditCard = ({
         <View>
           <Text style={[styles.walletAddressText, {color: theme.text}]}>
             <>
-            {t('address')}:{' '}
+              Address:{' '}
               {address
                 ? `${address.substring(0, 12).replace(/^"|"$/g, '')}...${address
                     .substring(12, 25)
                     .replace(/^"|"$/g, '')}`
-                :
-                t('loading')
-
-                }
+                : 'Loading...'}
             </>
           </Text>
         </View>
@@ -190,7 +203,9 @@ const CreditCard = ({
               </View>
             </TouchableOpacity>
             <View>
-              <Text style={[styles.btnsLabel, {color: theme.text}]}>{t('send')}</Text>
+              <Text style={[styles.btnsLabel, {color: theme.cardtext}]}>
+                Send
+              </Text>
             </View>
           </View>
           <View>
@@ -212,8 +227,8 @@ const CreditCard = ({
               </View>
             </TouchableOpacity>
             <View>
-              <Text style={[styles.btnsLabel, {color: theme.text}]}>
-              {t('receive')}
+              <Text style={[styles.btnsLabel, {color: theme.cardtext}]}>
+                Receive
               </Text>
             </View>
           </View>
@@ -235,7 +250,9 @@ const CreditCard = ({
               </View>
             </TouchableOpacity>
             <View>
-              <Text style={[styles.btnsLabel, {color: theme.text}]}>{t('swap')}</Text>
+              <Text style={[styles.btnsLabel, {color: theme.cardtext}]}>
+                Swap
+              </Text>
             </View>
           </View>
           <View>
@@ -251,8 +268,8 @@ const CreditCard = ({
               </View>
             </TouchableOpacity>
             <View>
-              <Text style={[styles.btnsLabel, {color: theme.text}]}>
-              {t('bridging')}
+              <Text style={[styles.btnsLabel, {color: theme.cardtext}]}>
+                Bridging
               </Text>
             </View>
           </View>

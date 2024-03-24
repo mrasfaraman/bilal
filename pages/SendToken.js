@@ -19,10 +19,6 @@ import BottomMenu from '../components/BottomMenu';
 import AddButton from '../components/AddButton';
 import {ThemeContext} from '../context/ThemeContext';
 import {useAuth} from '../context/AuthContext';
-import {useTranslation} from 'react-i18next';
-import i18n from './i18n';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import {
   sendEvmNative,
   Evm_estimatedGas,
@@ -61,20 +57,6 @@ const BuyNonNative = ({route, navigation}) => {
   const [activeAccount, setActiveAccount] = useState();
   const [address, setAddress] = useState();
   const [activeNet, setActiveNet] = useState();
-  const {t} = useTranslation();
-  useEffect(() => {
-    const loadSelectedLanguage = async () => {
-      try {
-        const selectedLanguage = await AsyncStorage.getItem('selectedLanguage');
-        if (selectedLanguage) {
-          i18n.changeLanguage(selectedLanguage); 
-        }
-      } catch (error) {
-        console.error('Error loading selected language:', error);
-      }
-    };
-    loadSelectedLanguage();
-  }, []);
   // useEffect(() => {
   //     console.log("aaaaaaaaaaaaaaaaa", tokenData)
   // }, [])
@@ -287,7 +269,7 @@ const BuyNonNative = ({route, navigation}) => {
   return (
     <ScrollView
       style={[styles.MainWrapper, {backgroundColor: theme.screenBackgroud}]}>
-      <Header title={t('send')} onBack={() => navigation.goBack()} />
+      <Header title="Send" onBack={() => navigation.goBack()} />
       <View>
         <Text style={[styles.buyAmount, {color: theme.text}]}>
           {Number(tokenData?.balance).toFixed(3)} {tokenData?.symbol}{' '}
@@ -317,13 +299,7 @@ const BuyNonNative = ({route, navigation}) => {
       {loader ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <MaroonSpinner />
-          <Text>
-            
-          {t('loading')}
-
-
-
-          </Text>
+          <Text>Loading...</Text>
         </View>
       ) : (
         <>
@@ -370,8 +346,7 @@ const BuyNonNative = ({route, navigation}) => {
               ]}
               onChangeText={setAmountToSend}
               value={amountToSend}
-              placeholder={t('amount_to_send')}
-
+              placeholder="Amount to Send"
               keyboardType="numeric"
               placeholderTextColor="#666"
             />
@@ -384,7 +359,7 @@ const BuyNonNative = ({route, navigation}) => {
                 backgroundColor: 'gray',
                 borderRadius: 5,
               }}>
-              <Text style={{color: theme.buttonText}}>{t('max')}</Text>
+              <Text style={{color: theme.buttonText}}>MAX</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.tokenImportBtnWrapper}>
@@ -395,7 +370,7 @@ const BuyNonNative = ({route, navigation}) => {
               ]}
               onPress={() => handleSend()}>
               <Text style={[styles.tokenImportButtonText, {color: theme.text}]}>
-             {t('send')} 
+                Send
               </Text>
             </TouchableOpacity>
           </View>

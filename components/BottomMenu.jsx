@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, {useContext} from 'react';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import BottomHome from '../assets/images/bottom-home.png';
 import BottomClock from '../assets/images/bottom-clock.png';
 import BottomCenter from '../assets/images/bottom-center.png';
@@ -10,28 +10,43 @@ import BottomClockDark from '../assets/images/bottom-clock-dark.png';
 import BottomCenterDark from '../assets/images/bottom-center-dark.png';
 import BottomProfileDark from '../assets/images/bottom-profile-dark.png';
 import BottomWorldDark from '../assets/images/bottom-world-dark.png';
-import { ThemeContext } from '../context/ThemeContext';
+import {ThemeContext} from '../context/ThemeContext';
+import {useIsFocused} from '@react-navigation/native';
 
-const BottomMenu = ({ navigation }) => {
-  const { theme } = useContext(ThemeContext);
+const BottomMenu = ({navigation}) => {
+  const {theme} = useContext(ThemeContext);
   const currentScreenName =
     navigation.getState().routes[navigation.getState().index].name;
   console.log('My Screen Name ==> ', currentScreenName);
+  const isFocused = useIsFocused();
+
   return (
     <View style={styles.menuUpperWrapper}>
-      <View style={[styles.menuContainer, { backgroundColor: theme.menuItemBG }]}>
+      <View style={[styles.menuContainer, {backgroundColor: theme.menuItemBG}]}>
         <TouchableOpacity
           style={[
             styles.bottomTabWrapper,
             {
-              backgroundColor: `${currentScreenName == 'MainPage' ? theme.emphasis : ''
-                }`,
+              backgroundColor: `${
+                currentScreenName == 'MainPage'
+                  ? theme.bottomButtonSelectedBG
+                  : 'rgba(0,0,0,0)'
+              }`,
             },
           ]}
           onPress={() => navigation.navigate('MainPage')}>
           <Image
             style={styles.bottomTabImg}
-            source={theme.type == 'dark' ? BottomHome : BottomHomeDark}
+            source={
+              currentScreenName == 'MainPage'
+                ? theme.name == 'theme3' ||
+                  (theme.name == 'dark' && theme.type == 'dark')
+                  ? BottomHomeDark
+                  : BottomHome
+                : theme.type == 'dark'
+                ? BottomHome
+                : BottomHomeDark
+            }
             alt="icon"
           />
         </TouchableOpacity>
@@ -39,32 +54,53 @@ const BottomMenu = ({ navigation }) => {
           style={[
             styles.bottomTabWrapper,
             {
-              backgroundColor: `${currentScreenName == 'TransactionRecordScreen'
-                ? theme.emphasis
-                : ''
-                }`,
+              backgroundColor: `${
+                currentScreenName == 'TransactionRecordScreen'
+                  ? theme.bottomButtonSelectedBG
+                  : 'rgba(0,0,0,0)'
+              }`,
             },
           ]}
           onPress={() => navigation.navigate('TransactionRecordScreen')}>
           <Image
             style={styles.bottomTabImg}
-            source={theme.type == 'dark' ? BottomClock : BottomClockDark}
+            source={
+              currentScreenName == 'TransactionRecordScreen'
+                ? theme.name == 'theme3' ||
+                  (theme.name == 'dark' && theme.type == 'dark')
+                  ? BottomClockDark
+                  : BottomClock
+                : theme.type == 'dark'
+                ? BottomClock
+                : BottomClockDark
+            }
             alt="icon"
           />
         </TouchableOpacity>
-        <TouchableOpacity style={[
-          styles.bottomTabWrapper,
-          {
-            backgroundColor: `${currentScreenName == 'Browser'
-              ? theme.emphasis
-              : ''
+        <TouchableOpacity
+          style={[
+            styles.bottomTabWrapper,
+            {
+              backgroundColor: `${
+                currentScreenName == 'Browser'
+                  ? theme.bottomButtonSelectedBG
+                  : 'rgba(0,0,0,0)'
               }`,
-          },
-        ]}
+            },
+          ]}
           onPress={() => navigation.navigate('Browser')}>
           <Image
             style={styles.bottomTabImg}
-            source={theme.type == 'dark' ? BottomCenter : BottomCenterDark}
+            source={
+              currentScreenName == 'Browser'
+                ? theme.name == 'theme3' ||
+                  (theme.name == 'dark' && theme.type == 'dark')
+                  ? BottomCenterDark
+                  : BottomCenter
+                : theme.type == 'dark'
+                ? BottomCenter
+                : BottomCenterDark
+            }
             alt="icon"
           />
         </TouchableOpacity>
@@ -73,7 +109,16 @@ const BottomMenu = ({ navigation }) => {
           onPress={() => navigation.navigate('SettingsScreen')}>
           <Image
             style={styles.bottomTabImg}
-            source={theme.type == 'dark' ? BottomProfile : BottomProfileDark}
+            source={
+              currentScreenName == 'SettingsScreen'
+                ? theme.name == 'theme3' ||
+                  (theme.name == 'dark' && theme.type == 'dark')
+                  ? BottomProfileDark
+                  : BottomProfile
+                : theme.type == 'dark'
+                ? BottomProfile
+                : BottomProfileDark
+            }
             alt="icon"
           />
         </TouchableOpacity>
@@ -81,14 +126,26 @@ const BottomMenu = ({ navigation }) => {
           style={[
             styles.bottomTabWrapper,
             {
-              backgroundColor: `${currentScreenName == 'PanCakeList' ? theme.emphasis : ''
-                }`,
+              backgroundColor: `${
+                currentScreenName == 'PanCakeList'
+                  ? theme.bottomButtonSelectedBG
+                  : 'rgba(0,0,0,0)'
+              }`,
             },
           ]}
           onPress={() => navigation.navigate('PanCakeList')}>
           <Image
             style={styles.bottomTabImg}
-            source={theme.type == 'dark' ? BottomWorld : BottomWorldDark}
+            source={
+              currentScreenName == 'PanCakeList'
+                ? theme.name == 'theme3' ||
+                  (theme.name == 'dark' && theme.type == 'dark')
+                  ? BottomWorldDark
+                  : BottomWorld
+                : theme.type == 'dark'
+                ? BottomWorld
+                : BottomWorldDark
+            }
             alt="icon"
           />
         </TouchableOpacity>

@@ -1,5 +1,6 @@
 import React, {useState, useContext, useEffect} from 'react';
 import {
+  Appearance,
   Image,
   SafeAreaView,
   ScrollView,
@@ -14,20 +15,11 @@ import PrivateKeyModal from '../components/setting/PrivateKeyModal';
 import {useAuth} from '../context/AuthContext';
 import {black} from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 import {enrollFingerprint} from '../utils/BiometricUtils';
-import {useTranslation} from 'react-i18next';
-import i18n from './i18n';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 export default function SettingsScreen({navigation}) {
   const [darkMode, setDarkMode] = useState(false);
   const {theme, switchTheme} = useContext(ThemeContext);
   const {selectedAccount} = useAuth();
   const [selectedAccountKey, setSelectedAccountKey] = useState();
-  const {t} = useTranslation();
-  const [currency, setCurrency] = useState('');
-  const [name, setName] = useState();
-
-  
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setSelectedAccountKey(selectedAccount);
@@ -36,116 +28,23 @@ export default function SettingsScreen({navigation}) {
   }, [selectedAccount]);
 
   useEffect(() => {
-    const loadSelectedLanguage = async () => {
-      try {
-        const selectedLanguage = await AsyncStorage.getItem('selectedLanguage');
-        if (selectedLanguage) {
-          i18n.changeLanguage(selectedLanguage);
-        }
-      } catch (error) {
-        console.error('Error loading selected language:', error);
-      }
-    };
-    loadSelectedLanguage();
-  }, []);
-  
+    if (theme.type == 'light') {
+      setDarkMode(false);
+    } else setDarkMode(true);
+  }, [theme.type]);
 
-  useEffect(() => {
-    const loadName = async () => {
-      try {
-        const Name = await AsyncStorage.getItem('selectedName');
-        if (Name) {
-          setName(Name);
-        }
-      } catch (error) {
-        console.error('Error loading selected Name:', error);
-      }
-    };
-    loadName();
-  }, []);
-
-  const handleName = async () => {
-    try {
-      const Name = await AsyncStorage.getItem('selectedName');
-      if (Name) {
-        setName(Name);
-      }
-    } catch (error) {
-      console.error('Error loading selected Name:', error);
-    }
-  };
-
-  useEffect(() => {
-    const loadSelectedCurrency = async () => {
-      try {
-        const currencyName = await AsyncStorage.getItem('selectedCurrency');
-        if (currencyName) {
-          setCurrency(currencyName);
-        }
-      } catch (error) {
-        console.error('Error loading selected currency:', error);
-      }
-    };
-    loadSelectedCurrency();
-  }, []);
-  // useEffect(() => {
-  //   const loadSelectedCode = async () => {
-  //     try {
-  //       const currencyCode = await AsyncStorage.getItem('selectedCode');
-  //       if (currencyCode) {
-  //         setCurrency(currencyCode);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error loading selected currency code:', error);
-  //     }
-  //   };
-  //   loadSelectedCode();
-  // }, []);
-  // Function to handle currency change
-  // const handleCurrencyCode = async () => {
-  //   try {
-  //     const currencyCode = await AsyncStorage.getItem('selectedCode');
-  //     if (currencyCode) {
-  //       setCurrencycode(currencyCode);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error loading selected currency code:', error);
-  //   }
-  // };
-  const handleCurrencyChange = async () => {
-    try {
-      const currencyName = await AsyncStorage.getItem('selectedCurrency');
-      if (currencyName) {
-        setCurrency(currencyName);
-      }
-    } catch (error) {
-      console.error('Error loading selected currency:', error);
-    }
-  };
-  // Subscribe to navigation focus event
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      handleCurrencyChange();
-      handleName()
-    });
-    return unsubscribe;
-  }, [navigation]);
-
-  
   return (
     <View style={{flex: 1, backgroundColor: theme.screenBackgroud}}>
       <SafeAreaView>
         <ScrollView style={{backgroundColor: theme.screenBackgroud}}>
           <Header
-            title={t('settings')}
+            title="Settings"
             skipOption={false}
             onBack={() => navigation.goBack()}
           />
           <View style={[styles.container]}>
             <View style={styles.Menu}>
-              <Text style={[styles.header, {color: theme.text}]}>
-                {t('themes')}
-              </Text>
+              <Text style={[styles.header, {color: theme.text}]}>Themes</Text>
               <View
                 style={[
                   styles.menuItemBig,
@@ -160,7 +59,7 @@ export default function SettingsScreen({navigation}) {
                     }
                   />
                   <Text style={[styles.menuItemText, {color: theme.text}]}>
-                    {t('mode')}
+                    Mode
                   </Text>
                 </View>
 
@@ -210,7 +109,7 @@ export default function SettingsScreen({navigation}) {
                       }
                     />
                     <Text style={[styles.menuItemText, {color: theme.text}]}>
-                      {t('themes')}
+                      Theme
                     </Text>
                   </View>
 
@@ -231,9 +130,7 @@ export default function SettingsScreen({navigation}) {
               </TouchableOpacity>
             </View>
             <View style={styles.Menu}>
-              <Text style={[styles.header, {color: theme.text}]}>
-                {t('general')}
-              </Text>
+              <Text style={[styles.header, {color: theme.text}]}>General</Text>
               {/* <TouchableOpacity onPress={() => navigation.navigate('Themes')}>
               <View
                 style={[
@@ -286,7 +183,7 @@ export default function SettingsScreen({navigation}) {
                       }
                     />
                     <Text style={[styles.menuItemText, {color: theme.text}]}>
-                      {t('create_new_account')}
+                      Create New Account
                     </Text>
                   </View>
 
@@ -322,7 +219,7 @@ export default function SettingsScreen({navigation}) {
                       }
                     />
                     <Text style={[styles.menuItemText, {color: theme.text}]}>
-                      {t('import_account')}
+                      Import Account
                     </Text>
                   </View>
 
@@ -357,7 +254,7 @@ export default function SettingsScreen({navigation}) {
                       }
                     />
                     <Text style={[styles.menuItemText, {color: theme.text}]}>
-                      {t('import_token_network')}
+                      Import Token / Network
                     </Text>
                   </View>
 
@@ -392,7 +289,7 @@ export default function SettingsScreen({navigation}) {
                       }
                     />
                     <Text style={[styles.menuItemText, {color: theme.text}]}>
-                      {t('networks')}
+                      Networks
                     </Text>
                   </View>
 
@@ -440,7 +337,7 @@ export default function SettingsScreen({navigation}) {
                       }
                     />
                     <Text style={[styles.menuItemText, {color: theme.text}]}>
-                      {t('reset_password')}
+                      Reset Password
                     </Text>
                   </View>
 
@@ -475,7 +372,7 @@ export default function SettingsScreen({navigation}) {
                       }
                     />
                     <Text style={[styles.menuItemText, {color: theme.text}]}>
-                      {t('set_biometric_verification')}
+                      Set Biometric Verification
                     </Text>
                   </View>
 
@@ -494,101 +391,101 @@ export default function SettingsScreen({navigation}) {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('CurrencyScreen')}>
-                <View
-                  style={[
-                    styles.menuItemBig,
-                    {backgroundColor: theme.menuItemBG},
-                    styles.menuItem,
-                  ]}>
-                  <View style={styles.leftItem}>
-                    <Image
-                      source={
-                        theme.type == 'dark'
-                          ? require('../assets/images/currency-dollar-circle.png')
-                          : require('../assets/images/currency-dollar-circle-dark.png')
-                      }
-                    />
-                    <Text style={[styles.menuItemText, {color: theme.text}]}>
-                      {t('currency')}
-                    </Text>
-                  </View>
+              {/* <TouchableOpacity
+              onPress={() => navigation.navigate('CurrencyScreen')}>
+              <View
+                style={[
+                  styles.menuItemBig,
+                  { backgroundColor: theme.menuItemBG },
+                  styles.menuItem,
+                ]}>
+                <View style={styles.leftItem}>
+                  <Image
+                    source={
+                      theme.type == 'dark'
+                        ? require('../assets/images/currency-dollar-circle.png')
+                        : require('../assets/images/currency-dollar-circle-dark.png')
+                    }
+                  />
+                  <Text style={[styles.menuItemText, { color: theme.text }]}>
+                    Currency
+                  </Text>
+                </View>
 
-                  <View style={[styles.rightItemWithText, {color: theme.text}]}>
-                    <Text style={[styles.rightItemText, {color: theme.text}]}>
-                      {currency}  
-                    </Text>
+                <View style={[styles.rightItemWithText, { color: theme.text }]}>
+                  <Text style={[styles.rightItemText, { color: theme.text }]}>
+                    USD
+                  </Text>
+                  <View
+                    style={[
+                      styles.rightItem,
+                      { backgroundColor: theme.rightArrowBG },
+                    ]}>
                     <View
                       style={[
-                        styles.rightItem,
-                        {backgroundColor: theme.rightArrowBG},
+                        styles.rightArrow,
+                        { backgroundColor: theme.rightArrowBG },
                       ]}>
-                      <View
-                        style={[
-                          styles.rightArrow,
-                          {backgroundColor: theme.rightArrowBG},
-                        ]}>
-                        <Image
-                          source={
-                            theme.type == 'dark'
-                              ? require('../assets/images/arrow-right.png')
-                              : require('../assets/images/arrow-right-dark.png')
-                          }
-                        />
-                      </View>
+                      <Image
+                        source={
+                          theme.type == 'dark'
+                            ? require('../assets/images/arrow-right.png')
+                            : require('../assets/images/arrow-right-dark.png')
+                        }
+                      />
                     </View>
                   </View>
                 </View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('LanguageScreen')}>
-                <View
-                  style={[
-                    styles.menuItemBig,
-                    {backgroundColor: theme.menuItemBG},
-                    styles.menuItem,
-                  ]}>
-                  <View style={styles.leftItem}>
-                    <Image
-                      source={
-                        theme.type == 'dark'
-                          ? require('../assets/images/translate.png')
-                          : require('../assets/images/translate-dark.png')
-                      }
-                    />
-                    <Text style={[styles.menuItemText, {color: theme.text}]}>
-                      {t('language')}
-                    </Text>
-                  </View>
+              </View>
+            </TouchableOpacity> */}
+              {/* <TouchableOpacity
+              onPress={() => navigation.navigate('LanguageScreen')}>
+              <View
+                style={[
+                  styles.menuItemBig,
+                  { backgroundColor: theme.menuItemBG },
+                  styles.menuItem,
+                ]}>
+                <View style={styles.leftItem}>
+                  <Image
+                    source={
+                      theme.type == 'dark'
+                        ? require('../assets/images/translate.png')
+                        : require('../assets/images/translate-dark.png')
+                    }
+                  />
+                  <Text style={[styles.menuItemText, { color: theme.text }]}>
+                    Language
+                  </Text>
+                </View>
 
-                  <View style={[styles.rightItemWithText, {color: theme.text}]}>
-                    {/* <Image source={require('../assets/images/Eng.png')} /> */}
-                    <Text style={[styles.rightItemText, {color: theme.text}]}>
-                      {name}
-                    </Text>
+                <View style={[styles.rightItemWithText, { color: theme.text }]}>
+                  <Image source={require('../assets/images/Eng.png')} />
+                  <Text style={[styles.rightItemText, { color: theme.text }]}>
+                    English (US)
+                  </Text>
+                  <View
+                    style={[
+                      styles.rightItem,
+                      { backgroundColor: theme.rightArrowBG },
+                    ]}>
                     <View
                       style={[
-                        styles.rightItem,
-                        {backgroundColor: theme.rightArrowBG},
+                        styles.rightArrow,
+                        { backgroundColor: theme.rightArrowBG },
                       ]}>
-                      <View
-                        style={[
-                          styles.rightArrow,
-                          {backgroundColor: theme.rightArrowBG},
-                        ]}>
-                        <Image
-                          source={
-                            theme.type == 'dark'
-                              ? require('../assets/images/arrow-right.png')
-                              : require('../assets/images/arrow-right-dark.png')
-                          }
-                        />
-                      </View>
+                      <Image
+                        source={
+                          theme.type == 'dark'
+                            ? require('../assets/images/arrow-right.png')
+                            : require('../assets/images/arrow-right-dark.png')
+                        }
+                      />
                     </View>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </View>
+            </TouchableOpacity> */}
               <TouchableOpacity onPress={() => navigation.navigate('Themes')}>
                 {/* <View
                 style={[
@@ -625,7 +522,7 @@ export default function SettingsScreen({navigation}) {
               </View> */}
               </TouchableOpacity>
             </View>
-            <View style={styles.Menu}>
+            {/* <View style={styles.Menu}>
             <Text style={[styles.header, {color: theme.text}]}>Others</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Themes')}>
               <View
@@ -697,7 +594,7 @@ export default function SettingsScreen({navigation}) {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('About')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Themes')}>
               <View
                 style={[
                   styles.menuItemBig,
@@ -778,7 +675,7 @@ export default function SettingsScreen({navigation}) {
                 </View>
               </View>
             </TouchableOpacity>
-          </View>
+          </View> */}
           </View>
         </ScrollView>
       </SafeAreaView>

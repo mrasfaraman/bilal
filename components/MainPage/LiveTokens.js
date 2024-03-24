@@ -15,23 +15,15 @@ import AssetGraph from '../../assets/images/asset_graph.png';
 import AssetLasticon from '../../assets/images/asset_last_icon.png';
 import {ThemeContext} from '../../context/ThemeContext';
 import MaroonSpinner from '../Loader/MaroonSpinner';
-// import { fetchCoins } from '../../utils/function';
+import {fetchCoins} from '../../utils/function';
 import Sparkline from '../Sparkline ';
 import {useAuth} from '../../context/AuthContext';
 import {LineChart} from 'react-native-svg-charts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios'; // Import axios
-import {useNavigation} from '@react-navigation/native';
-import {useTranslation} from 'react-i18next';
-import i18n from '../../pages/i18n';
-
-
-const LiveToken = ({address}) => {
+const LiveToken = ({navigation, address}) => {
   const [coins, setCoins] = useState([]);
-  const [symbol, setSymbol] = useState('')
-  const navigation = useNavigation();
+
   const [switchEnables, setSwitchEnables] = useState([]);
-  const [reloadFlag, setReloadFlag] = useState(true); // State to trigger screen reload
 
   const getSwitchData = async () => {
     const existingDataJson = await AsyncStorage.getItem('switchs');
@@ -45,113 +37,20 @@ const LiveToken = ({address}) => {
   }, []);
 
   useEffect(() => {
-
-    const loadSelectedS = async () => {
-      try {
-        const currencyS = await AsyncStorage.getItem('selectedS');
-        if (currencyS) {
-          setSymbol(currencyS);
-          console.log("code is :", currencyS)
-          // setReloadFlag(prevFlag => !prevFlag); // Trigger reload on initial load
-        }
-      } catch (error) {
-        console.error('Error loading selected currency S:', error);
-      }
-    };
-    navigation.addListener('focus', ()=>{
-
-      loadSelectedS();
-    } )
-  }, [navigation]); 
-  useEffect(() => {
-    const loadSelectedCode = async () => {
-      try {
-        const currencyCode = await AsyncStorage.getItem('selectedCode');
-        if (currencyCode) {
-          setCurrencycode(currencyCode);
-          console.log('code is :', currencyCode);
-          setReloadFlag(prevFlag => !prevFlag); // Trigger reload on initial load
-        }
-      } catch (error) {
-        console.error('Error loading selected currency code:', error);
-      }
-    };
-    navigation.addListener('focus', () => {
-      loadSelectedCode();
-    });
-  }, [navigation]);
-
-  useEffect(() => {
     const getCoinsData = async () => {
-      if (!currencycode) return; // Ensure currency code is available before fetching data
-      try {
-        const response = await axios.get(
-          `https://api.coingecko.com/api/v3/coins/markets`,
-          {
-            params: {
-              vs_currency: currencycode,
-              order: 'market_cap_desc',
-              per_page: 10,
-              page: 1,
-              sparkline: true,
-              price_change_percentage: '24h',
-            },
-          },
-        );
-        setCoins(response.data);
-      } catch (error) {
-        console.log('Error fetching coins:', error);
-        if (error.response) {
-          console.log('Response data:', error.response.data);
-          console.log('Response status:', error.response.status);
-          console.log('Response headers:', error.response.headers);
-        }
-      }
+      const coinData = await fetchCoins();
+      setCoins(coinData);
     };
-  
     getCoinsData();
-  }, [currencycode, reloadFlag]);
-  
-  const [currencycode, setCurrencycode] = useState('');
-
-  useEffect(() => {
-    // loadSelectedCode();
-
-    const setInitialLoader = () => {
-      setLoader(true);
-      const timer = setTimeout(() => {
-        setLoader(false);
-      }, 4000);
-      return () => clearTimeout(timer);
-    };
-
-    setInitialLoader(); // Call initial loader when component mounts
-
-    const unsubscribe = navigation.addListener('focus', () => {
-      console.log('Currency Code:', currencycode); // Log currency code when screen gains focus
-    });
-    return unsubscribe;
-  }, [navigation]);
+  }, []);
 
   const [isGrid, setIsGrid] = useState(false);
   const {theme} = useContext(ThemeContext);
   const {selectedAccount} = useAuth();
-  const {t} = useTranslation();
-  useEffect(() => {
-    const loadSelectedLanguage = async () => {
-      try {
-        const selectedLanguage = await AsyncStorage.getItem('selectedLanguage');
-        if (selectedLanguage) {
-          i18n.changeLanguage(selectedLanguage); 
-        }
-      } catch (error) {
-        console.error('Error loading selected language:', error);
-      }
-    };
-    loadSelectedLanguage();
-  }, []);
+
   const [loader, setLoader] = useState(false);
-  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // ///////////////////////////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
     setLoader(true);
     const timer = setTimeout(() => {
@@ -159,8 +58,8 @@ const LiveToken = ({address}) => {
     }, 4000);
     return () => clearTimeout(timer);
   }, [selectedAccount]);
-  ////////////////////////////////////////////////////////////////////////////////////////
-  /////////////
+  // ///////////////////////////////////////////////////////////////////////////////////////////////////
+
   // Box Grid
   const RenderCard = ({item, index}) => {
     let enabled = switchEnables.find(i => i.index === index)?.switch;
@@ -168,13 +67,11 @@ const LiveToken = ({address}) => {
     } else if (!enabled) {
       return;
     }
-    
     return (
       <View
         style={[
           styles.renderCardWrapper,
           {backgroundColor: theme.menuItemBG},
-
           theme.type != 'dark'
             ? {borderWidth: 1, borderColor: theme.buttonBorder}
             : {},
@@ -211,7 +108,7 @@ const LiveToken = ({address}) => {
         <View style={styles.assetCardLastWrapper}>
           <View>
             <Text style={[styles.assetLastPrice, {color: theme.text}]}>
-              {item?.symbol?.toUpperCase()} {symbol}{item?.current_price}
+              {item?.symbol?.toUpperCase()} ${item?.current_price}
             </Text>
             <Text style={[styles.assetLastStoke, {color: theme.text}]}>
               {item?.last_updated}
@@ -268,7 +165,7 @@ const LiveToken = ({address}) => {
         <View style={styles.assetCardLastWrapper}>
           <View>
             <Text style={[styles.assetLastPrice, {color: theme.text}]}>
-              {symbol}{item?.current_price}
+              ${item?.current_price}
             </Text>
             {/* <Text style={[styles.assetLastStoke, { color: theme.text }]}>
               {item.market_cap}
@@ -295,7 +192,7 @@ const LiveToken = ({address}) => {
         <>
           <View style={styles.assetHeader}>
             <Text style={[styles.assetHeaderText, {color: theme.text}]}>
-            {t('hot')} 🔥
+              Hot 🔥
             </Text>
             {isGrid && (
               <View
@@ -329,14 +226,23 @@ const LiveToken = ({address}) => {
                 style={[
                   styles.assetAddBtn,
                   {
-                    borderColor: theme.buttonBorder,
-                    backgroundColor: theme.menuItemBG,
+                    borderColor: theme.addButtonBorder,
+                    backgroundColor: theme.addButtonBG,
                   },
                 ]}>
                 <TouchableOpacity
                   style={{padding: 11.47}}
                   onPress={() => navigation.navigate('TokenList')}>
-                  <Text style={[styles.assetAddBtnText, {color: theme.text}]}>
+                  <Text
+                    style={[
+                      styles.assetAddBtnText,
+                      {
+                        color:
+                          theme.name == 'theme3'
+                            ? theme.screenBackgroud
+                            : theme.text,
+                      },
+                    ]}>
                     +
                   </Text>
                 </TouchableOpacity>

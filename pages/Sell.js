@@ -1,4 +1,4 @@
-import React, {useContext , useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
   Image,
   ScrollView,
@@ -8,40 +8,24 @@ import {
   View,
   TextInput,
   FlatList,
-  Share
+  Share,
 } from 'react-native';
 import Coin from '../assets/images/asset_coin_icon.png';
 import Wallet from '../assets/images/wallet.png';
-import WalletDark from "../assets/images/wallet-dark.png"
+import WalletDark from '../assets/images/wallet-dark.png';
 import faceID from '../assets/images/face_id.png';
 import Print from '../assets/images/print.png';
 import Header from '../components/header';
 import BottomMenu from '../components/BottomMenu';
 import AddButton from '../components/AddButton';
 import {ThemeContext} from '../context/ThemeContext';
-import { SafeAreaView } from 'react-native';
+import {SafeAreaView} from 'react-native';
 import QRCodeGenerator from '../components/QRCodeGenerator/QRCodeGenerator';
-import {useTranslation} from 'react-i18next';
-import i18n from './i18n';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const Sell = ({route,navigation}) => {
+import SubmitBtn from '../components/SubmitBtn';
+const Sell = ({route, navigation}) => {
   const {theme} = useContext(ThemeContext);
-  const {t} = useTranslation();
-  useEffect(() => {
-    const loadSelectedLanguage = async () => {
-      try {
-        const selectedLanguage = await AsyncStorage.getItem('selectedLanguage');
-        if (selectedLanguage) {
-          i18n.changeLanguage(selectedLanguage); 
-        }
-      } catch (error) {
-        console.error('Error loading selected language:', error);
-      }
-    };
-    loadSelectedLanguage();
-  }, []);
-  const shareAddress = async (evmAddress) => {
+
+  const shareAddress = async evmAddress => {
     try {
       await Share.share({
         message: `Here's my Wallet Address: ${evmAddress}`,
@@ -50,23 +34,25 @@ const Sell = ({route,navigation}) => {
       console.error('Error sharing EVM address:', error);
     }
   };
-  
+
   useEffect(() => {
     if (route?.params) {
-      console.log("Account >>>",route?.params?.account)
-      console.log("Network >>>",route?.params?.network)
+      console.log('Account >>>', route?.params?.account);
+      console.log('Network >>>', route?.params?.network);
       // console.log("Recepent Address >>>",route?.params?.recepentAddress)
     }
   }, [route?.params]);
   return (
     <ScrollView
       style={[styles.MainWrapper, {backgroundColor: theme.screenBackgroud}]}>
-      <Header title={t('receive')} onBack={() => navigation.goBack()} />
-      <SafeAreaView style={{marginTop:60}}>
-      <QRCodeGenerator evmAddress={route?.params?.account.replace(/^"|"$/g, '')} />
-    </SafeAreaView>
-      <View style={{marginBottom:50}}>
-        <Text style={[styles.buyAmount, {color: theme.text}]}>{t('scan_qr')}</Text>
+      <Header title="Receive" onBack={() => navigation.goBack()} />
+      <SafeAreaView style={{marginTop: 60}}>
+        <QRCodeGenerator
+          evmAddress={route?.params?.account.replace(/^"|"$/g, '')}
+        />
+      </SafeAreaView>
+      <View style={{marginBottom: 50}}>
+        <Text style={[styles.buyAmount, {color: theme.text}]}>Scan QR</Text>
       </View>
       {/* <View
         style={[
@@ -94,20 +80,29 @@ const Sell = ({route,navigation}) => {
       <View style={styles.coinFlex}>
         <Image source={theme.type == 'dark' ? Wallet : WalletDark} />
         <View>
-          <Text style={styles.coinMainText}>{t('wallet_address')}</Text>
+          <Text style={styles.coinMainText}>Wallet Address</Text>
           <Text style={[styles.coinSecText, {color: theme.text}]}>
             {route?.params?.account.replace(/^"|"$/g, '')}
           </Text>
         </View>
       </View>
       <View style={styles.tokenImportBtnWrapper}>
-        <TouchableOpacity
+        <SubmitBtn
+          title="Share"
+          onPress={() =>
+            shareAddress(route?.params?.account.replace(/^"|"$/g, ''))
+          }
+          containerStyle={{marginHorizontal: 0}}
+        />
+        {/* <TouchableOpacity
           style={[styles.tokenImportButton, {borderColor: theme.buttonBorder}]}
-          onPress={() => shareAddress(route?.params?.account.replace(/^"|"$/g, ''))}>
+          onPress={() =>
+            shareAddress(route?.params?.account.replace(/^"|"$/g, ''))
+          }>
           <Text style={[styles.tokenImportButtonText, {color: theme.text}]}>
-          {t('share')}
+            Share
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </ScrollView>
   );
