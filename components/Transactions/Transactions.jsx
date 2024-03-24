@@ -20,9 +20,6 @@ import {useAuth} from '../../context/AuthContext';
 import {getEvmTrx, getsolTrxsignatures, getsolTrx} from '../../utils/function';
 import MaroonSpinner from '../Loader/MaroonSpinner';
 import {Calendar} from 'react-native-calendars';
-import {useTranslation} from 'react-i18next';
-import i18n from '../../pages/i18n';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function convertEpochToLocalStandardTime(epochTime) {
   // Create a new Date object using the epoch time
@@ -48,21 +45,6 @@ function extractFirstWord(inputString) {
 }
 
 export default function Trancactions({navigation}) {
-  const {t} = useTranslation();
-  useEffect(() => {
-    const loadSelectedLanguage = async () => {
-      try {
-        const selectedLanguage = await AsyncStorage.getItem('selectedLanguage');
-        if (selectedLanguage) {
-          i18n.changeLanguage(selectedLanguage);
-        }
-      } catch (error) {
-        console.error('Error loading selected language:', error);
-      }
-    };
-    loadSelectedLanguage();
-  }, []);
-
   const {theme} = useContext(ThemeContext);
   const [trx, setTrx] = useState([]);
   const [soltrx, setsolTrx] = useState([]);
@@ -247,7 +229,7 @@ export default function Trancactions({navigation}) {
         </View>
         <View style={styles.line}>
           <View style={styles.statusContainer}>
-            <Text style={{color: theme.text}}>{t('status')}:</Text>
+            <Text style={{color: theme.text}}>Status:</Text>
             <View
               style={
                 status === 'Success'
@@ -279,7 +261,7 @@ export default function Trancactions({navigation}) {
             </View>
           </View>
           <View style={styles.dateContainer}>
-            <Text style={{color: theme.text}}>{t('date')}:</Text>
+            <Text style={{color: theme.text}}>Date:</Text>
             <Text style={{color: theme.text}}> {time}</Text>
           </View>
         </View>
@@ -307,11 +289,11 @@ export default function Trancactions({navigation}) {
               <View style={styles.left}>
                 <View>
                   <Text style={[styles.token, {color: theme.text}]}>
-                    {item?.transaction_info?.toAddress ===
+                    {item?.transaction_info?.toAddress ==
                     'https://solscan.io/account/' +
                       selectedAccount?.solana?.publicKey
-                      ? t('received')
-                      : t('send')}
+                      ? 'Received'
+                      : 'Send'}
                   </Text>
                 </View>
               </View>
@@ -348,7 +330,7 @@ export default function Trancactions({navigation}) {
             </View>
             <View style={styles.line}>
               <View style={styles.statusContainer}>
-                <Text style={{color: theme.text}}> {t('status')}:</Text>
+                <Text style={{color: theme.text}}>Status:</Text>
                 <View
                   style={
                     item?.Result === 'SuccessFinalized (MAX confirmations)'
@@ -414,10 +396,10 @@ export default function Trancactions({navigation}) {
             gap: 80,
           }}>
           <TouchableOpacity onPress={() => setShowPopup(true)}>
-            <Text>{t('date_filter')}</Text>
+            <Text style={{color: theme.text}}>Date Filter</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setTrx(trxData)}>
-            <Text>{t('clear_filter')}</Text>
+            <Text style={{color: theme.text}}>Clear Filter</Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -434,7 +416,7 @@ export default function Trancactions({navigation}) {
           <TouchableOpacity
             style={styles.closeButton}
             onPress={() => setShowPopup(false)}>
-            <Text style={{color: 'black', padding: 10}}>{t('close')}</Text>
+            <Text style={{color: 'black', padding: 10}}>Close</Text>
           </TouchableOpacity>
 
           {/* Calendar for date selection */}
@@ -445,7 +427,7 @@ export default function Trancactions({navigation}) {
 
           {/* Apply Filter Button */}
           <TouchableOpacity style={styles.applyButton} onPress={applyFilter}>
-            <Text>{t('apply_filter')}</Text>
+            <Text style={{color: 'white'}}>Apply Filter</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -465,7 +447,9 @@ export default function Trancactions({navigation}) {
                   alignItems: 'center',
                   top: 50,
                 }}>
-                <Text>{t('no_transaction_found')}</Text>
+                <Text style={{color: theme.text, opacity: 0.7}}>
+                  No Transaction Found
+                </Text>
               </View>
             ) : (
               <FlatList

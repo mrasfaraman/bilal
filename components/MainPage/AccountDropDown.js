@@ -7,10 +7,6 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-
-import {useTranslation} from 'react-i18next';
-import i18n from '../../pages/i18n';
-
 import { ThemeContext } from '../../context/ThemeContext';
 import { useAuth } from "../../context/AuthContext";
 function AccountDropDown() {
@@ -18,20 +14,7 @@ function AccountDropDown() {
     const [selectedAcount, setSelectedAccounts] = useState("Account 1")
     const { Accounts, setSelectedAccount , selectedAccount} = useAuth()
     const Network = 'solana'
-    const {t} = useTranslation();
-    useEffect(() => {
-      const loadSelectedLanguage = async () => {
-        try {
-          const selectedLanguage = await AsyncStorage.getItem('selectedLanguage');
-          if (selectedLanguage) {
-            i18n.changeLanguage(selectedLanguage); 
-          }
-        } catch (error) {
-          console.error('Error loading selected language:', error);
-        }
-      };
-      loadSelectedLanguage();
-    }, []);
+
 
 
     const changeNetwork = async (account, index) => {
@@ -70,8 +53,7 @@ function AccountDropDown() {
                         onPress={() => changeNetwork(account, index)}>
                         <View style={{ padding: 10 }}>
                             <Text style={[styles.userAccount, { color: 'black' }]}>
-                            {t('account')}
- {index + 1}
+                                Account {index + 1}
                             </Text>
                         </View>
                     </TouchableOpacity>

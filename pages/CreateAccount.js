@@ -18,9 +18,6 @@ import Header from '../components/header';
 import { ThemeContext } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { CreateWallet, CreateEVMWallet } from '../utils/function';
-import {useTranslation} from 'react-i18next';
-import i18n from './i18n';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 
@@ -62,28 +59,15 @@ export default function CreateAccount({ navigation }) {
     useEffect(() => {
        
     }, [])
-    const {t} = useTranslation();
-    useEffect(() => {
-      const loadSelectedLanguage = async () => {
-        try {
-          const selectedLanguage = await AsyncStorage.getItem('selectedLanguage');
-          if (selectedLanguage) {
-            i18n.changeLanguage(selectedLanguage); 
-          }
-        } catch (error) {
-          console.error('Error loading selected language:', error);
-        }
-      };
-      loadSelectedLanguage();
-    }, []);
+
     return (
         <ScrollView style={{ backgroundColor: theme.screenBackgroud }}>
-            <Header title={t('create_account')}onBack={() => navigation.goBack()} />
+            <Header title={'Create Account'} onBack={() => navigation.goBack()} />
             <View style={[styles.content, styles.textContainer, { marginTop: '50%' }]}>
-                <Text style={[styles.textStyle, { color: theme.text }]}>{t('create_account')}</Text>
+                <Text style={[styles.textStyle, { color: theme.text }]}>Create Accouont</Text>
                 <Text
                     style={[styles.textStyle, styles.instruction, { color: theme.text }]}>
-                    {t('create_new_account')}
+                    Create New Account
                 </Text>
             </View>
             <View>
@@ -94,7 +78,7 @@ export default function CreateAccount({ navigation }) {
                 )}
             </View>
             <SubmitBtn
-                title={t('create')}
+                title="Create "
                 onPress={() => handleSubmit()}
             />
         </ScrollView>

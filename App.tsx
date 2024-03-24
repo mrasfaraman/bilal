@@ -1,12 +1,12 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 // import {StatusBar} from 'react-native';
 
 import React from 'react';
 
-import { ThemeProvider } from './context/ThemeContext';
-import { AuthProvider } from './context/AuthContext';
-import { DoodleProvider } from './context/DoodleContext';
+import {ThemeProvider} from './context/ThemeContext';
+import {AuthProvider} from './context/AuthContext';
+import {DoodleProvider} from './context/DoodleContext';
 import CreateWalletScreen from './pages/CreateWalletScreen';
 import CurrencyScreen from './pages/CurrencyScreen';
 import HomeScreen from './pages/HomeScreen';
@@ -31,7 +31,7 @@ import Bridging from './pages/Bridging';
 import Swap from './pages/Swap';
 import ConfirmTransaction from './pages/ConfirmTransaction';
 import NativeEvmos from './pages/NativeEvmos';
-import { NativeBaseProvider, Box } from 'native-base';
+import {NativeBaseProvider, Box} from 'native-base';
 import TokenList from './pages/TokenList';
 import Verification from './pages/Verification';
 import Chat from './pages/Chat';
@@ -52,133 +52,126 @@ import ConfirmSolTransaction from './pages/ConfirmSolTransaction';
 import ConfirmSolSwapTransaction from './pages/ConfirmSolSwapTransaction';
 import SwapEvm from './pages/SwapEvm';
 import ConfirmEvmSwapTransaction from './pages/ConfirmEvmSwapTransaction';
-import AboutUsScreen from './pages/AboutUsScreen';
-import IdleTimeoutHOC from './components/IdleTimeoutHOC';
-import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
-import TermsScreen from './pages/TermScreen';
-import PrivacyPolicyScreen from './pages/PrivacyScreen';
-import RecoveryConfirmScreen from './pages/RecoveryConfirmScreen';
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from 'react-native-alert-notification';
 function App(): React.JSX.Element {
   const Stack = createNativeStackNavigator();
 
   return (
     <AlertNotificationRoot>
-    <AuthProvider>
-      <ThemeProvider>
-        <DoodleProvider>
-          <NativeBaseProvider>
-            <NavigationContainer>
-              <StatusBar />
-              <IdleTimeoutHOC>
-                <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="Home" component={HomeScreen} />
-                <Stack.Screen name="Privacy" component={PrivacyPolicyScreen} />  
-                <Stack.Screen name="Term" component={TermsScreen} /> 
-                <Stack.Screen name="RecoveryConfirm" component={RecoveryConfirmScreen} />           
-                <Stack.Screen name="LoginScreen" component={LoginScreen} />
-                
-                <Stack.Screen
-                  name="swapevm"
-                  component={SwapEvm}
-                />
-                 <Stack.Screen
-                  name="ConfirmEvmSwapTransaction"
-                  component={ConfirmEvmSwapTransaction}
-                />
-                <Stack.Screen
-                  name="CreateWalletScreen"
-                  component={CreateWalletScreen}
-                />
-                <Stack.Screen
-                  name="BiometricEnrollmentScreen"
-                  component={BiometricEnrollmentScreen}
-                />
-                <Stack.Screen
-                  name="BiometricAuthenticationScreen"
-                  component={BiometricAuthenticationScreen}
-                />
-                <Stack.Screen
-                  name="RecoveryPhraseScreen"
-                  component={RecoveryPhraseScreen}
-                />
-                <Stack.Screen
-                  name="SetPasswordScreen"
-                  component={SetPasswordScreen}
-                />
-                <Stack.Screen
-                  name="ResetPasswordScreen"
-                  component={ResetPasswordScreen}
-                />
-                <Stack.Screen name="Verification" component={Verification} />
-                <Stack.Screen name="MainPage" component={MainPage} />
-                <Stack.Screen name="Sell" component={Sell} />
-                <Stack.Screen name="Buy" component={Buy} />
-                <Stack.Screen
-                  name="SettingsScreen"
-                  component={SettingsScreen}
-                />
-                <Stack.Screen
-                  name="TransactionRecordScreen"
-                  component={TransactionRecordScreen}
-                />
+      <AuthProvider>
+        <ThemeProvider>
+          <DoodleProvider>
+            <NativeBaseProvider>
+              <NavigationContainer>
+                <StatusBar />
+                <Stack.Navigator screenOptions={{headerShown: false}}>
+                  <Stack.Screen name="LoginScreen" component={LoginScreen} />
+                  <Stack.Screen name="Home" component={HomeScreen} />
+                  <Stack.Screen name="swapevm" component={SwapEvm} />
+                  <Stack.Screen
+                    name="ConfirmEvmSwapTransaction"
+                    component={ConfirmEvmSwapTransaction}
+                  />
+                  <Stack.Screen
+                    name="CreateWalletScreen"
+                    component={CreateWalletScreen}
+                  />
+                  <Stack.Screen
+                    name="BiometricEnrollmentScreen"
+                    component={BiometricEnrollmentScreen}
+                  />
+                  <Stack.Screen
+                    name="BiometricAuthenticationScreen"
+                    component={BiometricAuthenticationScreen}
+                  />
+                  <Stack.Screen
+                    name="RecoveryPhraseScreen"
+                    component={RecoveryPhraseScreen}
+                  />
+                  <Stack.Screen
+                    name="SetPasswordScreen"
+                    component={SetPasswordScreen}
+                  />
+                  <Stack.Screen
+                    name="ResetPasswordScreen"
+                    component={ResetPasswordScreen}
+                  />
+                  <Stack.Screen name="Verification" component={Verification} />
+                  <Stack.Screen name="MainPage" component={MainPage} />
+                  <Stack.Screen name="Sell" component={Sell} />
+                  <Stack.Screen name="Buy" component={Buy} />
+                  <Stack.Screen
+                    name="SettingsScreen"
+                    component={SettingsScreen}
+                  />
+                  <Stack.Screen
+                    name="TransactionRecordScreen"
+                    component={TransactionRecordScreen}
+                  />
 
-                <Stack.Screen name="NativeEvmos" component={NativeEvmos} />
-                <Stack.Screen
-                  name="ConfirmTransaction"
-                  component={ConfirmTransaction}
-                />
-                <Stack.Screen
-                  name="ConfirmSolTransaction"
-                  component={ConfirmSolTransaction}
-                />
-                <Stack.Screen
-                  name="ConfirmErc20Transaction"
-                  component={ConfirmErc20Transaction}
-                />
-                <Stack.Screen
-                  name="ConfirmErc20SolTransaction"
-                  component={ConfirmErc20SolTransaction}
-                />
-                 <Stack.Screen
-                  name="ConfirmSolSwapTransaction"
-                  component={ConfirmSolSwapTransaction}
-                />
-                <Stack.Screen name="Swap" component={Swap} />
-                <Stack.Screen name="Bridging" component={Bridging} />
-                <Stack.Screen name="EditProfile" component={EditProfile} />
-                <Stack.Screen name="QueryForm" component={QueryForm} />
-                <Stack.Screen name="HelpAnswers" component={HelpAnswers} />
-                <Stack.Screen name="Help" component={Help} />
+                  <Stack.Screen name="NativeEvmos" component={NativeEvmos} />
+                  <Stack.Screen
+                    name="ConfirmTransaction"
+                    component={ConfirmTransaction}
+                  />
+                  <Stack.Screen
+                    name="ConfirmSolTransaction"
+                    component={ConfirmSolTransaction}
+                  />
+                  <Stack.Screen
+                    name="ConfirmErc20Transaction"
+                    component={ConfirmErc20Transaction}
+                  />
+                  <Stack.Screen
+                    name="ConfirmErc20SolTransaction"
+                    component={ConfirmErc20SolTransaction}
+                  />
+                  <Stack.Screen
+                    name="ConfirmSolSwapTransaction"
+                    component={ConfirmSolSwapTransaction}
+                  />
+                  <Stack.Screen name="Swap" component={Swap} />
+                  <Stack.Screen name="Bridging" component={Bridging} />
+                  <Stack.Screen name="EditProfile" component={EditProfile} />
+                  <Stack.Screen name="QueryForm" component={QueryForm} />
+                  <Stack.Screen name="HelpAnswers" component={HelpAnswers} />
+                  <Stack.Screen name="Help" component={Help} />
 
-                <Stack.Screen name="Scan" component={Scan} />
-                <Stack.Screen name="Browser" component={BrowserScreen} />
-                <Stack.Screen name="Notification" component={Notification} />
-                <Stack.Screen name="AddToken" component={AddToken} />
-                <Stack.Screen name="Staking" component={Staking} />
-                <Stack.Screen name="PanCakeList" component={PanCakeList} />
-                <Stack.Screen
-                  name="CurrencyScreen"
-                  component={CurrencyScreen}
-                />
-                <Stack.Screen
-                  name="LanguageScreen"
-                  component={LanguageScreen}
-                />
-                <Stack.Screen name="ThemesScreen" component={ThemesScreen} />
-                <Stack.Screen name="TokenList" component={TokenList} />
-                <Stack.Screen name="Chat" component={Chat} />
-                <Stack.Screen name="ImportWallet" component={ImportWallet} />
-                <Stack.Screen name="Networks" component={Networks} />
-                <Stack.Screen name="CreateAccount" component={CreateAccount} />
-                <Stack.Screen name="SendToken" component={SendToken} />
-                <Stack.Screen name="About" component={AboutUsScreen} />
-              </Stack.Navigator>
-              </IdleTimeoutHOC>
-            </NavigationContainer>
-          </NativeBaseProvider>
-        </DoodleProvider>
-      </ThemeProvider>
-    </AuthProvider>
+                  <Stack.Screen name="Scan" component={Scan} />
+                  <Stack.Screen name="Browser" component={BrowserScreen} />
+                  <Stack.Screen name="Notification" component={Notification} />
+                  <Stack.Screen name="AddToken" component={AddToken} />
+                  <Stack.Screen name="Staking" component={Staking} />
+                  <Stack.Screen name="PanCakeList" component={PanCakeList} />
+                  <Stack.Screen
+                    name="CurrencyScreen"
+                    component={CurrencyScreen}
+                  />
+                  <Stack.Screen
+                    name="LanguageScreen"
+                    component={LanguageScreen}
+                  />
+                  <Stack.Screen name="ThemesScreen" component={ThemesScreen} />
+                  <Stack.Screen name="TokenList" component={TokenList} />
+                  <Stack.Screen name="Chat" component={Chat} />
+                  <Stack.Screen name="ImportWallet" component={ImportWallet} />
+                  <Stack.Screen name="Networks" component={Networks} />
+                  <Stack.Screen
+                    name="CreateAccount"
+                    component={CreateAccount}
+                  />
+                  <Stack.Screen name="SendToken" component={SendToken} />
+                </Stack.Navigator>
+              </NavigationContainer>
+            </NativeBaseProvider>
+          </DoodleProvider>
+        </ThemeProvider>
+      </AuthProvider>
     </AlertNotificationRoot>
   );
 }

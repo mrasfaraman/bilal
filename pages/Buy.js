@@ -28,9 +28,7 @@ import {
   AlertNotificationRoot,
   Toast,
 } from 'react-native-alert-notification';
-import {useTranslation} from 'react-i18next';
-import i18n from './i18n';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import SubmitBtn from '../components/SubmitBtn';
 
 const Buy = ({route, navigation}) => {
   const {theme} = useContext(ThemeContext);
@@ -58,20 +56,7 @@ const Buy = ({route, navigation}) => {
     let data = await JSON.parse(selectedNetwork);
     setActiveNet(data);
   };
-  const {t} = useTranslation();
-  useEffect(() => {
-    const loadSelectedLanguage = async () => {
-      try {
-        const selectedLanguage = await AsyncStorage.getItem('selectedLanguage');
-        if (selectedLanguage) {
-          i18n.changeLanguage(selectedLanguage); 
-        }
-      } catch (error) {
-        console.error('Error loading selected language:', error);
-      }
-    };
-    loadSelectedLanguage();
-  }, []);
+
   const handleSend = async () => {
     const solanaAddressRegex = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
     const evmAddressRegex = /^0x[a-fA-F0-9]{40}$/;
@@ -261,7 +246,7 @@ const Buy = ({route, navigation}) => {
   return (
     <ScrollView
       style={[styles.MainWrapper, {backgroundColor: theme.screenBackgroud}]}>
-      <Header title={t('send')} onBack={() => navigation.goBack()} />
+      <Header title="Send" onBack={() => navigation.goBack()} />
       <View>
         <Text style={[styles.buyAmount, {color: theme.text}]}>
           {route?.params?.amount.toFixed(5)} {activeNet?.symbol}
@@ -279,11 +264,7 @@ const Buy = ({route, navigation}) => {
       {loader ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <MaroonSpinner />
-          <Text>
-          {t('loading')}
-
-
-          </Text>
+          <Text>Loading...</Text>
         </View>
       ) : (
         <>
@@ -297,7 +278,7 @@ const Buy = ({route, navigation}) => {
               <View>
                 {/* <Text style={styles.coinMainText}>Debit Or Credit</Text> */}
                 <Text style={[styles.coinSecText, {color: theme.text}]}>
-                  {activeNet?.networkName} {t('account')}{' '}
+                  {activeNet?.networkName} Account{' '}
                 </Text>
               </View>
             </View>
@@ -306,11 +287,11 @@ const Buy = ({route, navigation}) => {
             style={[
               styles.input,
               styles.coinSecText,
-              {flex: 1, borderColor: theme.text, color: theme.text},
+              {flex: 1, borderColor: theme.addButtonBorder, color: theme.text},
             ]}
             onChangeText={setRecipientAddress}
             value={recipientAddress}
-            placeholder={t('recipient_address')}
+            placeholder="Recipient Address"
             placeholderTextColor="#666"
           />
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -318,11 +299,15 @@ const Buy = ({route, navigation}) => {
               style={[
                 styles.input,
                 styles.coinSecText,
-                {flex: 1, borderColor: theme.text, color: theme.text},
+                {
+                  flex: 1,
+                  borderColor: theme.addButtonBorder,
+                  color: theme.text,
+                },
               ]}
               onChangeText={setAmountToSend}
               value={amountToSend}
-              placeholder={t('amount_to_send')}
+              placeholder="Amount to Send"
               keyboardType="numeric"
               placeholderTextColor="#666"
             />
@@ -335,14 +320,18 @@ const Buy = ({route, navigation}) => {
                 backgroundColor: 'gray',
                 borderRadius: 5,
               }}>
-              <Text style={{color: theme.buttonText}}>  {t('max')}
-</Text>
+              <Text style={{color: theme.buttonText}}>MAX</Text>
             </TouchableOpacity>
           </View>
 
           {activeNet ? (
             <View style={styles.tokenImportBtnWrapper}>
-              <TouchableOpacity
+              <SubmitBtn
+                title="Send"
+                onPress={() => handleSend()}
+                containerStyle={{marginHorizontal: 0}}
+              />
+              {/* <TouchableOpacity
                 style={[
                   styles.tokenImportButton,
                   {borderColor: theme.buttonBorder},
@@ -350,10 +339,9 @@ const Buy = ({route, navigation}) => {
                 onPress={() => handleSend()}>
                 <Text
                   style={[styles.tokenImportButtonText, {color: theme.text}]}>
-                    {t('send')}
-
+                  Send
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           ) : (
             ''

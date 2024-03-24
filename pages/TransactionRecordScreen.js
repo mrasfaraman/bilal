@@ -1,4 +1,4 @@
-import React, { useState, useContext , useEffect } from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   FlatList,
   Image,
@@ -7,20 +7,17 @@ import {
   Text,
   View,
   ImageBackground,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 // import {Image} from 'react-native-svg';
 import Header from '../components/header';
 import TransactionDetail from '../components/TransactionDetail';
 import BottomMenu from '../components/BottomMenu';
 import {ThemeContext} from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { getEvmTrx , getsolTrxsignatures , getsolTrx} from '../utils/function';
+import {useAuth} from '../context/AuthContext';
+import {getEvmTrx, getsolTrxsignatures, getsolTrx} from '../utils/function';
 import MaroonSpinner from '../components/Loader/MaroonSpinner';
 import Trancactions from '../components/Transactions/Transactions';
-import {useTranslation} from 'react-i18next';
-import i18n from './i18n';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function convertEpochToLocalStandardTime(epochTime) {
   // Create a new Date object using the epoch time
@@ -45,12 +42,12 @@ function extractFirstWord(inputString) {
   }
 }
 
-export default function TransactionRecordScreen({ navigation }) {
+export default function TransactionRecordScreen({navigation}) {
   const {theme} = useContext(ThemeContext);
-  const [trx ,setTrx] = useState([])
-  const [soltrx ,setsolTrx] = useState([])
-  const [detailOpen, setDetailOpen] = useState(false)
-  const [Loader, setLoader] = useState(false)
+  const [trx, setTrx] = useState([]);
+  const [soltrx, setsolTrx] = useState([]);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [Loader, setLoader] = useState(false);
   const {
     wc,
     wallet,
@@ -62,22 +59,9 @@ export default function TransactionRecordScreen({ navigation }) {
     Accounts,
     addAccount,
     Networks,
-    selectedNetwork
+    selectedNetwork,
   } = useAuth();
-  const {t} = useTranslation();
-  useEffect(() => {
-    const loadSelectedLanguage = async () => {
-      try {
-        const selectedLanguage = await AsyncStorage.getItem('selectedLanguage');
-        if (selectedLanguage) {
-          i18n.changeLanguage(selectedLanguage); 
-        }
-      } catch (error) {
-        console.error('Error loading selected language:', error);
-      }
-    };
-    loadSelectedLanguage();
-  }, []);
+
   // const Network = activeNet?.type;
   // const [activeAccount, setActiveAccount] = useState();
   // const [activeNet, setActiveNet] = useState()
@@ -85,9 +69,9 @@ export default function TransactionRecordScreen({ navigation }) {
 
   // const getNetworkactive = async () => {
   //     let data = await JSON.parse(selectedNetwork)
-  //     setActiveNet(data) 
+  //     setActiveNet(data)
   // }
-  
+
   // useEffect(() => {
   //   getNetworkactive()
   // }, [selectedNetwork,setActiveNet , selectedAccount])
@@ -121,7 +105,7 @@ export default function TransactionRecordScreen({ navigation }) {
   //            }
   //           }
   //       }catch(error){
-       
+
   //       }
   // }, 3000);
   // return () => clearTimeout(timeoutId);
@@ -131,15 +115,14 @@ export default function TransactionRecordScreen({ navigation }) {
   //   setDetailOpen(val)
   // }
 
-
   // const renderTransactions =  ({ item }) => {
   //   const { currencySymbol, from, sendOrReceived, status, to, tx, currencyAddress } = item;
   //   const functionName = extractFirstWord(tx?.functionName);
   //   let time =  convertEpochToLocalStandardTime(tx?.timeStamp)
-  
+
   //   return (
   //     <TouchableOpacity style={[styles.transaction, {borderColor: theme.transactionBorder}]} onPress={() => console.log(time , functionName , currencySymbol, from, sendOrReceived, status, to, tx, currencyAddress)}>
-           
+
   //       <View style={styles.row}>
   //         <View style={styles.left}>
   //           {/* <Image source={logo} /> */}
@@ -164,7 +147,7 @@ export default function TransactionRecordScreen({ navigation }) {
   //             </Text>
   //             <Text style={[styles.amount, {color: theme.text}]}> {currencySymbol}</Text>
   //           </View>
-            
+
   //           {/* <Text style={[styles.BTCamount, {color: theme.text}]}>{Web3.utils.toWei(tx?.value, 'ether')} {currencySymbol}</Text> */}
   //         </View>
   //       </View>
@@ -206,19 +189,18 @@ export default function TransactionRecordScreen({ navigation }) {
   //     <>
   //     {item == undefined ? "" :
   //     <TouchableOpacity style={[styles.transaction, {borderColor: theme.transactionBorder}]} onPress={() => console.log("---")}>
-           
+
   //       <View style={styles.row}>
   //         <View style={styles.left}>
-          
-          
+
   //         <View>
   //         <Text style={[styles.token, {color: theme.text}]}>{item?.transaction_info?.toAddress == "https://solscan.io/account/"+selectedAccount?.solana?.publicKey ? "Received" : "Send" }</Text>
-          
+
   //           </View>
   //         </View>
   //         <View>
   //         <TransactionDetail OpenDetail={OpenDetail} detailOpen={detailOpen} />
-  //           <View style={[styles.right, {color: theme.text}]}>  
+  //           <View style={[styles.right, {color: theme.text}]}>
   //             <Text
   //               style={
   //                 item?.transaction_info?.amount === '-'
@@ -230,7 +212,7 @@ export default function TransactionRecordScreen({ navigation }) {
   //             </Text>
   //             <Text style={[styles.amount, {color: theme.text}]}> {item?.transaction_info?.symbol.toUpperCase()}</Text>
   //           </View>
-            
+
   //         </View>
   //       </View>
   //       <View style={styles.line}>
@@ -246,7 +228,7 @@ export default function TransactionRecordScreen({ navigation }) {
   //               style={
   //                 item?.Result === "SuccessFinalized (MAX confirmations)"
   //                   ? [styles.statusTextGreen, {color: theme.statusTextGreen}]
-        
+
   //                     : [styles.statusTextYellow, {color: theme.statusTextYellow}]
   //               }>
   //               {item?.Result.substring(0,16)}
@@ -266,16 +248,17 @@ export default function TransactionRecordScreen({ navigation }) {
 
   return (
     <View style={{flex: 1}}>
-     <ScrollView style={[styles.screen, {backgroundColor: theme.screenBackgroud }]}>
-        <Header title={t('transaction_record')} onBack={() => navigation.goBack()} />
+      <ScrollView
+        style={[styles.screen, {backgroundColor: theme.screenBackgroud}]}>
+        <Header title="Transaction Record" onBack={() => navigation.goBack()} />
         {/* <View style={styles.container}>
         {Loader ? <MaroonSpinner /> :
         <>
           <FlatList data={ net == 'evm' ? trx : soltrx } renderItem={ net == 'evm' ? renderTransactions : renderSolTransactions } />
         </>
-      }    
+      }
         </View> */}
-    <Trancactions />
+        <Trancactions />
       </ScrollView>
       <View>
         <BottomMenu navigation={navigation} />
@@ -400,7 +383,7 @@ const styles = StyleSheet.create({
   menuContainer: {
     height: '30%',
     width: '100%',
-    opacity: 1
+    opacity: 1,
     // flexDirection: 'row',
     // justifyContent: 'center',
     // alignItems: 'center',
@@ -421,9 +404,9 @@ const styles = StyleSheet.create({
     // maxWidth: 300,
     // resizeMode: 'contain',
     padding: 20,
-    opacity: 0.70,
+    opacity: 0.7,
     // width: "100%"
-    width: "600px"
+    width: '600px',
   },
   BTCamount: {
     // color: '#FFF',

@@ -1,30 +1,40 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { ScrollView, Alert, StyleSheet, View, Text } from 'react-native';
+import React, {useState, useEffect, useContext} from 'react';
+import {
+  ScrollView,
+  Alert,
+  StyleSheet,
+  View,
+  Text,
+  ToastAndroid,
+} from 'react-native';
 import MainHeader from '../components/MainPage/MainHeader';
 import CreditCard from '../components/MainPage/CreditCard';
 import MainAssets from '../components/MainPage/MainAssets';
 import MainList from '../components/MainPage/MainList';
 import BottomMenu from '../components/BottomMenu';
 import Customize from '../components/Customize';
-import { ThemeContext } from '../context/ThemeContext';
-import { useAuth, } from '../context/AuthContext';
+import {ThemeContext} from '../context/ThemeContext';
+import {useAuth} from '../context/AuthContext';
 import '@walletconnect/react-native-compat';
-import { Core } from '@walletconnect/core';
-import { Web3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils';
-import { getSolBalance, getEVMBalance } from '../utils/function';
+import {Core} from '@walletconnect/core';
+import {Web3Wallet, Web3WalletTypes} from '@walletconnect/web3wallet';
+import {buildApprovedNamespaces, getSdkError} from '@walletconnect/utils';
+import {getSolBalance, getEVMBalance} from '../utils/function';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WalletConnectModal from '../components/WalletConnectModal';
 import LiveToken from '../components/MainPage/LiveTokens';
-import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from 'react-native-alert-notification';
 
-
-
-const MainPage = ({ route, navigation }) => {
-  const { theme } = useContext(ThemeContext);
+const MainPage = ({route, navigation}) => {
+  const {theme} = useContext(ThemeContext);
   const [customizerOpen, setCustomizerOpen] = useState(false);
   const [address, setAddress] = useState();
-  const [activeNet, setActiveNet] = useState()
+  const [activeNet, setActiveNet] = useState();
   const [activeAccount, setActiveAccount] = useState();
   const {
     wc,
@@ -37,26 +47,26 @@ const MainPage = ({ route, navigation }) => {
     Accounts,
     addAccount,
     Networks,
-    selectedNetwork
+    selectedNetwork,
   } = useAuth();
   const Network = activeNet?.type;
-  const [sessionDetail, setSessionDetail] = useState({})
+  const [sessionDetail, setSessionDetail] = useState({});
 
   const openCustomizer = val => {
     setCustomizerOpen(val);
   };
 
-  const [walletModalOpen, setWalletModalOpen] = useState(false)
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
 
-  const closeModal = (close) => {
-    setWalletModalOpen(close)
-  }
+  const closeModal = close => {
+    setWalletModalOpen(close);
+  };
   const clearSession = () => {
-    setSessionDetail({})
-  }
+    setSessionDetail({});
+  };
 
-  const handleConnectPress = async (wc_uri) => {
-    console.log(">>>> run Connect");
+  const handleConnectPress = async wc_uri => {
+    console.log('>>>> run Connect');
     const core = new Core({
       projectId: 'c6cc849231f0c9770267752c7251f2b5',
     });
@@ -72,8 +82,8 @@ const MainPage = ({ route, navigation }) => {
     });
     setWeb3Wallet(web3wallet);
 
-    const onSessionProposal = async (event) => {
-      const { id, params } = event;
+    const onSessionProposal = async event => {
+      const {id, params} = event;
 
       try {
         const approvedNamespaces = buildApprovedNamespaces({
@@ -96,7 +106,7 @@ const MainPage = ({ route, navigation }) => {
                 `eip155:1:${address.replace(/^"|"$/g, '')}`,
                 `eip155:137:${address.replace(/^"|"$/g, '')}`,
                 `eip155:56:${address.replace(/^"|"$/g, '')}`,
-                `eip155:97:${address.replace(/^"|"$/g, '')}`
+                `eip155:97:${address.replace(/^"|"$/g, '')}`,
               ],
             },
           },
@@ -106,7 +116,7 @@ const MainPage = ({ route, navigation }) => {
           namespaces: approvedNamespaces,
         });
         // console.log("Session approved:", session);
-        saveSession({ id: Session.length + 1, session: session })
+        saveSession({id: Session.length + 1, session: session});
         // Toast.show({
         //   type: ALERT_TYPE.SUCCESS,
         //   title: 'Connection Sucessfull',
@@ -117,13 +127,13 @@ const MainPage = ({ route, navigation }) => {
           title: 'Connected Sucessfully',
           textBody: 'Your Wallet is Connected With Dapp.',
           button: 'close',
-        })
+        });
       } catch (error) {
         Toast.show({
           type: ALERT_TYPE.WARNING,
           title: 'Error Connecting',
           textBody: 'Your Wallet is Not Connected With Dapp.',
-        })
+        });
         console.log('Error handling session proposal:', error);
       }
     };
@@ -131,9 +141,9 @@ const MainPage = ({ route, navigation }) => {
     web3wallet.on('session_proposal', onSessionProposal);
 
     try {
-      console.log("URI:", wc_uri);
-      await web3wallet.pair({ uri: wc_uri });
-      console.log("Connecting to wallet!");
+      console.log('URI:', wc_uri);
+      await web3wallet.pair({uri: wc_uri});
+      console.log('Connecting to wallet!');
     } catch (error) {
       console.log('Error pairing with the URI:', error);
     }
@@ -141,7 +151,7 @@ const MainPage = ({ route, navigation }) => {
 
   const handleAccountsChanged = async (account, topic) => {
     if (!wallet || !topic) {
-      console.error("Web3Wallet is not initialized or no active session.");
+      console.error('Web3Wallet is not initialized or no active session.');
       return;
     }
     try {
@@ -149,10 +159,10 @@ const MainPage = ({ route, navigation }) => {
         topic,
         event: {
           name: 'accountsChanged',
-          data: [account]
+          data: [account],
         },
-        chainId: 'eip155:1'
-      })
+        chainId: 'eip155:1',
+      });
       console.log('Accounts updated successfully.');
     } catch (error) {
       console.error('Error updating accounts:', error);
@@ -161,7 +171,7 @@ const MainPage = ({ route, navigation }) => {
 
   const handleChainChanged = async (newChainId, topic) => {
     if (!wallet || !topic) {
-      console.error("Web3Wallet is not initialized or no active session.");
+      console.error('Web3Wallet is not initialized or no active session.');
       return;
     }
 
@@ -170,10 +180,10 @@ const MainPage = ({ route, navigation }) => {
         topic,
         event: {
           name: 'chainChanged',
-          data: newChainId
+          data: newChainId,
         },
-        chainId: `eip155:${newChainId}`
-      })
+        chainId: `eip155:${newChainId}`,
+      });
 
       console.log(`Chain updated to eip155:${newChainId} successfully.`);
     } catch (error) {
@@ -183,42 +193,56 @@ const MainPage = ({ route, navigation }) => {
 
   useEffect(() => {
     AsyncStorage.setItem('Accounts', JSON.stringify(Accounts));
-  }, [Accounts])
+  }, [Accounts]);
 
   const getNetworkactive = async () => {
-    let data = await JSON.parse(selectedNetwork)
-    setActiveNet(data)
-  }
-
-
-  useEffect(() => {
-    getNetworkactive()
-    const swich = async () => {
-      for (let i = 0; i < Session.length; i++) {
-        await handleChainChanged(activeNet?.networkId, Session[i].session.topic);
-      }
-    }
-    if (activeNet?.type == "evm") {
-      swich()
-    }
-  }, [selectedNetwork, setActiveNet])
+    let data = await JSON.parse(selectedNetwork);
+    setActiveNet(data);
+  };
 
   useEffect(() => {
+    getNetworkactive();
     const swich = async () => {
       for (let i = 0; i < Session.length; i++) {
-        await handleAccountsChanged(address.replace(/^"|"$/g, ''), Session[i].session.topic);
+        await handleChainChanged(
+          activeNet?.networkId,
+          Session[i].session.topic,
+        );
       }
+    };
+    if (activeNet?.type == 'evm') {
+      swich();
     }
-    if (activeNet?.type == "evm") {
-      swich()
-    }
-  }, [activeAccount, address])
+  }, [selectedNetwork, setActiveNet]);
 
+  useEffect(() => {
+    const swich = async () => {
+      for (let i = 0; i < Session.length; i++) {
+        await handleAccountsChanged(
+          address.replace(/^"|"$/g, ''),
+          Session[i].session.topic,
+        );
+      }
+    };
+    if (activeNet?.type == 'evm') {
+      swich();
+    }
+  }, [activeAccount, address]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setAddress(JSON.stringify(Network === 'solana' ? selectedAccount.solana.publicKey : selectedAccount.evm.address));
-      setActiveAccount(JSON.stringify(Network === 'solana' ? selectedAccount.solana : selectedAccount.evm));
+      setAddress(
+        JSON.stringify(
+          Network === 'solana'
+            ? selectedAccount.solana.publicKey
+            : selectedAccount.evm.address,
+        ),
+      );
+      setActiveAccount(
+        JSON.stringify(
+          Network === 'solana' ? selectedAccount.solana : selectedAccount.evm,
+        ),
+      );
     }, 1000);
     return () => clearTimeout(timeoutId);
   }, [Network, selectedAccount]);
@@ -226,20 +250,20 @@ const MainPage = ({ route, navigation }) => {
   const getNetwork = async () => {
     AsyncStorage.setItem('Networks', JSON.stringify(Networks));
     AsyncStorage.setItem('SelectedNetworks', selectedNetwork);
-  }
+  };
   useEffect(() => {
-    getNetwork()
-  }, [Networks])
+    getNetwork();
+  }, [Networks]);
 
   useEffect(() => {
     if (route?.params?.qrData) {
-      handleConnectPress(route?.params?.qrData)
+      handleConnectPress(route?.params?.qrData);
     }
   }, [route?.params?.qrData]);
 
   useEffect(() => {
     if (wc) {
-      handleConnectPress(wc)
+      handleConnectPress(wc);
     }
   }, [wc]);
 
@@ -247,11 +271,11 @@ const MainPage = ({ route, navigation }) => {
     if (wallet) {
       wallet.on('session_request', (error, payload) => {
         // Handle session requests
-        console.log("Payload: ",payload)
-        console.log("Error: ", error);
+        console.log('Payload: ', payload);
+        console.log('Error: ', error);
         if (error) {
-          setSessionDetail(error)
-          setWalletModalOpen(true)
+          setSessionDetail(error);
+          setWalletModalOpen(true);
           // console.log("Fast ======>", error);
           // console.log("Here our saves Session ====> ", Session)
           return;
@@ -261,13 +285,13 @@ const MainPage = ({ route, navigation }) => {
 
       wallet.on('call_request', (error, payload) => {
         // Handle call requests for methods such as eth_sendTransaction
-        console.log("Payload: ",payload)
-        console.log("Error: ", error);
+        console.log('Payload: ', payload);
+        console.log('Error: ', error);
 
         if (error) {
-          console.log(">>> Session Req", error);
-          setSessionDetail(error)
-          setWalletModalOpen(true)
+          console.log('>>> Session Req', error);
+          setSessionDetail(error);
+          setWalletModalOpen(true);
           return;
         }
         console.log('Call request received:', payload);
@@ -283,7 +307,7 @@ const MainPage = ({ route, navigation }) => {
         //   console.log(Session[Session.length])
         //   handleDisconnectPress(Session[Session.length].topic)
         // }
-        console.log(">>> Wallet Off Required")
+        console.log('>>> Wallet Off Required');
         // wallet.off('session_request');
         // wallet.off('call_request');
         // Disconnect any other listeners you may have set up
@@ -293,10 +317,10 @@ const MainPage = ({ route, navigation }) => {
 
   useEffect(() => {
     // console.log("Big Dream here ==> ", sessionDetail)
-  }, [sessionDetail])
-  return (
+  }, [sessionDetail]);
 
-    <View style={[styles.screen, { backgroundColor: theme.screenBackgroud }]}>
+  return (
+    <View style={[styles.screen, {backgroundColor: theme.screenBackgroud}]}>
       <View style={styles.screenMax}>
         <ScrollView>
           <Customize
@@ -305,9 +329,8 @@ const MainPage = ({ route, navigation }) => {
             navigation={navigation}
           />
           <MainHeader address={address} navigation={navigation} />
-          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-
-            <Text style={{ color: theme.text }}> {activeNet?.networkName}</Text>
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={{color: theme.text}}> {activeNet?.networkName}</Text>
           </View>
           <CreditCard
             activeAccount={activeAccount}
@@ -316,17 +339,21 @@ const MainPage = ({ route, navigation }) => {
             customizerVal={customizerOpen}
             navigation={navigation}
           />
-           <LiveToken navigation={navigation} address={address} />
+          <LiveToken navigation={navigation} address={address} />
           {/* <MainAssets navigation={navigation} address={address} /> */}
           <MainList navigation={navigation} />
         </ScrollView>
         <View>
-          <WalletConnectModal OpenDetail={closeModal} clearSession={clearSession} detailOpen={walletModalOpen} sessionData={sessionDetail} />
+          <WalletConnectModal
+            OpenDetail={closeModal}
+            clearSession={clearSession}
+            detailOpen={walletModalOpen}
+            sessionData={sessionDetail}
+          />
           <BottomMenu navigation={navigation} />
         </View>
       </View>
     </View>
-
   );
 };
 

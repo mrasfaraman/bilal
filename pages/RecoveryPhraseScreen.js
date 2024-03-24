@@ -20,14 +20,8 @@ import { useAuth } from '../context/AuthContext';
 import { CreateWallet, CreateEVMWallet , getSolBalance , getEVMBalance } from '../utils/function';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFS from 'react-native-fs';
+
 import Share from 'react-native-share';
-import {GoogleSignin} from 'react-native-google-signin';
-import GDrive from 'react-native-google-drive-api-wrapper';
-import DocumentPicker from 'react-native-document-picker';
-import {
-  GoogleSigninButton,
-  statusCodes,
-} from 'react-native-google-signin';
 
 
 
@@ -159,8 +153,6 @@ export default function RecoveryPhraseScreen({navigation}) {
   const [mnemonic , setMnemonic] = useState();
   const {setSelectedAccount,addAccount , setNetworks,setSelectedNetwork} = useAuth()
   const [backup , setBackup]  = useState()
-  const [userInfo, setUserInfo] = useState(null);
-  const [gettingLoginStatus, setGettingLoginStatus] = useState(true);
   const getWalletData = async () => {
     let data = await CreateWallet()
     let EVMdata = await CreateEVMWallet()
@@ -175,7 +167,6 @@ export default function RecoveryPhraseScreen({navigation}) {
     await AsyncStorage.setItem('selectedAccount', JSON.stringify(account_data));
     await AsyncStorage.setItem('Accounts', JSON.stringify([account_data]));
     addAccount(account_data)
-
 
     // let solbalance = await getSolBalance()
     // let evmbalance = await getEVMBalance()
@@ -194,7 +185,6 @@ export default function RecoveryPhraseScreen({navigation}) {
     setSelectedNetwork(Networks[0])
   },[])
 
-
   const handleSaveFile = async () => {
     const data = { backup : backup }; 
     const fileName = 'Wallet_Backup'; 
@@ -203,7 +193,6 @@ export default function RecoveryPhraseScreen({navigation}) {
       await shareFile(filePath);
     }
   };
-  console.log(mnemonic)
   return (
     <ScrollView style={{backgroundColor: theme.screenBackgroud}}>
       <Header
@@ -276,9 +265,7 @@ export default function RecoveryPhraseScreen({navigation}) {
           <View style={styles.buttons}>
           <TouchableOpacity
               style={[styles.buttonStyle, {borderColor: theme.buttonBorder}]}
-              onPress={() => navigation.navigate('RecoveryConfirm', { mnemonic: mnemonic })}
-              // onPress={()=> navigation.navigate('SetPasswordScreen')}
-              >
+              onPress={() => navigation.navigate('SetPasswordScreen')}>
               <Text style={[styles.btnText, {color: theme.text}]}>
                 Next
               </Text>
@@ -291,7 +278,7 @@ export default function RecoveryPhraseScreen({navigation}) {
                 Backup Manually
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={[
                 styles.buttonStyle,
                 styles.backupBtn,
@@ -313,13 +300,12 @@ export default function RecoveryPhraseScreen({navigation}) {
                   borderColor: theme.backupBtnBorder,
                   backgroundColor: theme.backupBtnBG,
                 },
-              ]}
-              >
+              ]}>
               <Image style={styles.logos} source={gd} />
               <Text style={[styles.btnText, {color: theme.text}]}>
                 Backup to Google Drive
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
        
           </View>
           </>
