@@ -26,7 +26,7 @@ const IdleTimeoutHOC = (props) => {
         setIsLocked(true);
         handleUnlockWithFingerprint(); // Automatically trigger fingerprint authentication
       }
-    }, 60000); // 1 minute in milliseconds
+    }, 60000) ; // 1 minute in milliseconds
 
     // Clean up timeout
     return () => {
